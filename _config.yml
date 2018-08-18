@@ -1,6 +1,6 @@
 # main text of home
-name: John Doe
-bio: A Man who travels the world eating noodles
+name: My Le Phuoc
+bio: Chicken Developer
 
 # twitter summary info
 description: A blog about technology and stuff related
@@ -30,19 +30,19 @@ permalink: /:title/
 
 # if you don't want comments in your posts, leave categories empty
 disqus:
-  shortname: mydisqus # enter this from your disqus account
-  categories: [blog, project] # only show disqus for posts that have these categories
+    shortname: mydisqus # enter this from your disqus account
+    categories: [blog, project] # only show disqus for posts that have these categories
 
 # if you don't have any of social below, comment the line
-facebook: myfacebook
-twitter: mytwitter
+facebook: profile.php?id=100006055354354
+twitter: lephuocmy668
 # google: mygoogle
 # instagram: myinstagram
 # pinterest: mypinterest
 # linkedin: mylinkedin
 # youtube: myyoutube
 # spotify: myspotify
-github: mygithub
+github: lephuocmy668
 # gitlab: mygitlab
 # lastfm: mylastfm
 # stackoverflow: 7044681/mystackoverflow
@@ -51,17 +51,17 @@ github: mygithub
 medium: medium
 # vimeo: myvimeo
 # lanyrd: mylanyrd
-email: myemail@gmail.com
+email: lephuocmy668@gmail.com
 
 authors:
-    johndoe:
-        name: John Doe
-        bio: A Man who travels the world eating noodles
+    mylp:
+        name: My Le Phuoc
+        bio: Chicken Developer
         external-image: false
         picture: assets/images/profile.jpg
         twitter: johndoe
-    jamesfoster:
-        name: James Foster
+    mylp:
+        name: My Le Phuoc
         bio: A Man who develops software with coffee
         external-image: false
         picture: assets/images/james.jpg
@@ -70,14 +70,14 @@ authors:
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: normal
+width: large
 
 # if you don't need pagination, comment the *paginate* configs below
 # paginate: 5
 # paginate_path: "blog/:num/"
 
 # if you don't need projects, comment the *projects* configs below
-projects: true
+projects: false
 
 # if you don't need "about" or "blog", comment them out below
 about: true
@@ -102,11 +102,11 @@ show-author: true
 animation: true
 
 plugins:
-  - jekyll-seo-tag
-  - jekyll-gist
-  - jekyll-feed
-  - jemoji
-  - jekyll-admin
+    - jekyll-seo-tag
+    - jekyll-gist
+    - jekyll-feed
+    - jemoji
+    - jekyll-admin
 
 jekyll-mentions:
     base_url: https://github.com
