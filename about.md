@@ -12,17 +12,16 @@ layout: page
 <ul class="skill-list">
 	<li>Golang - GoKit - Gin</li>
 	<li>Typescript - Node.JS - Koa.JS</li>
-	<li>Javascript - React.JS - Reudx - Redux Saga</li>
-	<li>PosgreSQL</li>
 	<li>Cassandra - MongoDB - Firestore</li>
-	<li>Redis</li>
 	<li>Kafka - Beanstalkd - SQS/SNS </li>
-	<li>HTML - CSS</li>
-	<li>Git - Gitflow</li>
-	<li>Scrum</li>
+	<li>PosgreSQL</li>
+	<li>Redis</li>
 	<li>OOP - OOD - OODP</li>
-	<li>Microsrvices Architecture - Clean 
-Architecture - Domain driven design - Event driven model</li>
+    <li>Microsrvices Architecture - CleanA rchitecture - Domain driven design - Event driven model</li>
+	<li>Javascript - React.JS - Redux - Redux Saga</li>
+    <li>HTML - CSS</li>
+    <li>Git - Gitflow</li>
+    <li>Scrum</li>
 
 </ul>
 
