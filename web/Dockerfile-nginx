@@ -1,6 +1,6 @@
 FROM nginx:latest
 RUN mkdir -p /etc/nginx/_site
-ADD   /home/lephuocmy668/indigo/_site /etc/nginx/_site
+ADD   ./_site /etc/nginx/_site
 COPY   default.conf /etc/nginx/conf.d/default.conf
 COPY   ssl-bundle.crt /etc/nginx/tiktok.vn.crt
 COPY   tiktok.vn.key /etc/nginx/tiktok.vn.key
