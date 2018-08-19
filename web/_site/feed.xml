@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-08-19T15:37:05+07:00</updated><id>http://localhost:4000/</id><title type="html">Le Phuoc My</title><subtitle>A blog about technology and stuff related</subtitle><entry><title type="html">Clean Architecture</title><link href="http://localhost:4000/clean-architecture/" rel="alternate" type="text/html" title="Clean Architecture" /><published>2018-01-20T09:01:00+07:00</published><updated>2018-01-20T09:01:00+07:00</updated><id>http://localhost:4000/clean-architecture</id><content type="html" xml:base="http://localhost:4000/clean-architecture/">&lt;p&gt;Trước khi đi vào nội dung chính của bài viết này, mình xin nói qua về quá trình mình đã tiếp cận với các kiểu kiến trúc trong việc xây dựng các ứng dụng web.&lt;/p&gt;
+
+&lt;p&gt;Điểm xuất phát của mình dường như nó không đi theo con đường “chính đạo” như các bạn các anh chị đi trước thường tiếp cận với Java, C#, PHP,…và đa số những bạn xuất phát theo con đường Java thường có cái nhìn cũng như tư duy về kiến trúc từ sớm, mình thì ngược lại, xuất phát một cách quán tính, mình bắt đầu với Node.js với một kiểu kiến trúc mà vài tháng sau khi học mình Node mới biết nó gọi là MVC(model-view-controller).&lt;/p&gt;
+
+&lt;p&gt;Sau đó một thời gian mình có cơ hội tham gia vào một dự án nhỏ chơi chơi mà sau đó mình đã gắn bó được một thời gian dài, dự án này gồm một ứng dụng web single page với hệ thống back end gồm 2 lớp Model và Controller cung cấp các api cho web app gọi, kiến trúc đó ban đầu chạy rất ổn. Tuy nhiên chuyện gì đến cũng đã đến, phần back end ngày một phình to và việc nhồi nhét rất nhiều thứ chỉ trong 2 lớp đã kéo theo nhiều vấn đề và lúc này cũng vì nhiều nguyên nhân mình đã không còn ở lại để giải quyết những vấn đề đó nữa. Sau này mình mới được tiếp cận với Clean architecture của tác giả Uncle Bob mình nhận ra rằng nếu dự án củ ban đầu được dựng code base dựa trên clean architecture thì các vấn đề đã trở nên đơn giản hơn và sẻ đở mất thời gian hơn rất nhiều.&lt;/p&gt;
+
+&lt;p&gt;Chính vì thế mình viết lại những tóm tắt sau khi tìm hiểu và implement clean architecture lại đây để có dịp quay lại ôn lại :v hoặc ai đó đang tìm hiểu hoặc đang implement đó đọc được bài này có thể cảm nhận và phản biện giúp mình cũng cố kiến thức hơn.&lt;/p&gt;
+
+&lt;p&gt;Hiện nay chúng ta có rất nhiều ý tưởng về kiến trúc hệ thống như Hexagonal Architecture(kiến trúc lục giác) , Onion Architecture(kiến trúc củ hành), Screaming Architecture,….. và kiến trúc mà chúng ta sẻ thảo luận trong bài viết này: Clean Architecture – Kiến trúc sạch. Dù những kiến trúc này có khác nhau đôi chút về chi tiết, tuy nhiên nhìn chung chúng tương tự nhau nhau về mục đích đó là phân tách các thành phần và mối quan hệ, bằng cách chia phần mềm thành các lớp. Thường thì mỗi một kiến trúc trong số đó đều phãi có ít nhất một lớp cho các business rule, và một lớp cho các interfaces thêm nữa mỗi loại kiến trúc đó đều tạo ra hệ thống mà nó đáp ứng các tiêu chuẩn sau:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Độc lập framework : Kiến trúc không phụ thuộc vào một số thư viện phần mềm có nhiều tính năng. Điều này cho phép bạn sử dụng các framework như các công cụ thay vì phải nhồi nhét hệ thống của bạn vào các ràng buộc hạn chế của chính chúng.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Dễ test mà không phãi phụ thuộc vào giao diện, database hay bất cứ thành phần bên ngoài nào.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Độc lập với giao diện người dùng, giao diện người dùng có thể thay đổi dễ dàng, mà không ảnh hưởng đến phần còn lại của hệ thống. Chẳng hạn, một giao diện web có thể được thay đổi thành giao diện command mà không làm ảnh hưởng đến các business rule.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Độc lập với Database, bạn có thể thay đổi từ Oracle hoặc Sql Server thành Mongo, BigTable, CouchDB hoặc bất kỳ hệ quản trị cơ sở dữ liệu nào mà không làm ảnh hưởng đến Business rule ban đầu.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Độc lập với các chương trình bên ngoài: Business rule không cần biết bất cứ điều gì về thế giới bên ngoài.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Clean Architecture là một kiến trúc có các đặc điểm như trên. Nói chung Clean Architecture cũng chỉ là một loại kiến trúc áp dụng các nguyên tắc thiết kế để xây dựng các hệ thống thoả mãn các yêu cầu trên, nó cũng tương tự như Domain Driven Design(DDD) nhưng lại chia nhỏ các lớp hơn. Biểu đồ sau đây sẻ cho bạn thấy ý tưởng cũng như mô hình cơ bản của clean architecture:
+&lt;img src=&quot;/assets/images/2018-01-20-clean-architecture/1.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-dependency-rulequy-tắc-phụ-thuộc&quot;&gt;The Dependency Rule(Quy tắc phụ thuộc)&lt;/h2&gt;
+
+&lt;p&gt;Các vòng tròn đồng tâm đại diện cho các khu vực khác nhau của phần mềm. Các thành phần càng nằm sâu bên trong hơn là những thành phần quan trọng hơn, vòng ngoài là các cơ chế, các vòng tròn bên trong là các chính sách điều khoản.&lt;/p&gt;
+
+&lt;p&gt;Quy tắc này cho rằng mã nguồn chỉ có thể hướng vào bên trong, tức là những thứ ở bên trong không thể biết về những thứ ở bên ngoài.&lt;/p&gt;
+
+&lt;p&gt;Cụ thể, tên của một cái gì đó khai báo trong một vòng tròn bên ngoài không được tham chiếu đến hoặc sử dụng bởi mã nguồn trong một vòng tròn bên trong bao gồm, các hàm, các class. biến, hoặc bất kỳ thực thể phần mềm khác. Cũng giống như vậy, các định dạng dữ liệu được sử dụng trong vòng ngoài không nên được sử dụng bởi những thứ ở vòng tròn bên trong, đặc biệt nếu các định dạng đó được tạo ra bởi một framework trong vòng tròn bên ngoài. Chúng ta không muốn bất cứ điều gì trong một vòng tròn bên ngoài tác động vào vòng tròn bên trong.&lt;/p&gt;
+
+&lt;h2 id=&quot;entitiescác-thực-thể&quot;&gt;Entities(Các thực thể)&lt;/h2&gt;
+
+&lt;p&gt;Các thực thể sẽ đóng gói các quy tắc nghiệp vụ. Một thực thể có thể là một đối tượng với phương thức hoặc có thể là một tập hợp các cấu trúc dữ liệu và hàm, miễn là nó có thể được sử dụng bởi nhiều ứng dụng khác nhau trong toàn bộ phần mềm.&lt;/p&gt;
+
+&lt;p&gt;Nếu bạn chỉ viết một ứng dụng đơn lẻ, thì những thực thể chính là các đối tượng nghiệp vụ của ứng dụng. Chúng đóng gói các quy tắc chung và cao cấp nhất. Chúng ít có khả năng thay đổi do ảnh hưởng từ những thay đổi bên ngoài. Chẳng hạn, bạn không thể mong những đối tượng này bị ảnh hưởng bởi một thay đổi đến từ việc phân trang hoặc bảo mật. Những hoạt động làm thay đổi một ứng dụng cụ thể không nên ảnh hưởng đến tầng thực thể.&lt;/p&gt;
+
+&lt;h2 id=&quot;use-cases&quot;&gt;Use Cases&lt;/h2&gt;
+
+&lt;p&gt;Phần mềm trong lớp này chứa các business rules cụ thể của ứng dụng. Nó đóng gói và implement tất cả các use cases của hệ thống. Các use cases này sẽ điều chỉnh luồng dữ liệu đến và đi từ các entities và chỉ đạo các thực thể đó sử dụng các business rules của doanh nghiệp để đạt được các mục tiêu của use case.&lt;/p&gt;
+
+&lt;p&gt;Chúng ta không mong muốn những thay đổi trong lớp này sẽ ảnh hưởng đến các thực thể. Chúng tôi cũng không mong muốn lớp này bị ảnh hưởng bởi những thay đổi của các yếu tố bên ngoài như cơ sở dữ liệu, giao diện người dùng hoặc bất kỳ framework nào. Lớp này bị cô lập với những lo ngại đó.&lt;/p&gt;
+
+&lt;p&gt;Tuy nhiên, chúng ta mong đợi rằng những thay đổi đối với hoạt động của ứng dụng sẽ ảnh hưởng đến các use-cases và đến phần mềm trong lớp này. Nếu chi tiết của use-case thay đổi, thì một số mã trong lớp này chắc chắn sẽ bị ảnh hưởng.&lt;/p&gt;
+
+&lt;h2 id=&quot;interface-adapters&quot;&gt;Interface Adapters&lt;/h2&gt;
+
+&lt;p&gt;Phần mềm trong layer này là một bộ các adapter có nhiệm vụ chuyển dữ liệu từ định dạng thuận tiện nhất cho các use case và thực thể thành định dạng thuận tiện nhất cho các chương trình bên ngoài như Database hoặc Web. Layer này chứa kiến trúc MVC. Presenters, Views và Controllers đều thuộc layer này. Những Model chỉ là cấu trúc dữ liệu được truyền từ Controller đến use case, và sau đó truyền từ use case đến Presenter và View.&lt;/p&gt;
+
+&lt;p&gt;Cũng tương tự, dữ liệu được chuyển đổi từ hình thức phù hợp cho entity và use case thành hình thức phù hợp cho framework đang được sử dụng. Những đoạn mã ở trong vòng tròn này không biết gì về cơ sở dữ liệu. Nếu cơ sở dữ liệu là kiểu SQL hay gì đó thì tất cả truy vấn nên được giới hạn cho layer này, cụ thể là các phần của layer này mà phải làm việc với cơ sở dữ liệu.&lt;/p&gt;
+
+&lt;h2 id=&quot;framework-và-driver&quot;&gt;Framework và Driver&lt;/h2&gt;
+
+&lt;p&gt;Layer ngoài cùng là kết hợp các framework và công cụ như cơ sở dữ liệu, web framework,… Nói chung bạn không viết nhiều code trong layer này ngoại trừ các đoạn mã để liên lạc với các vòng tròn tiếp theo ở bên trong. Layer này là nơi tập trung của các chi tiết. Web là một chi tiết. Cơ sở dữ liệu là một chi tiết. Chúng ta giữ những thứ này ở bên ngoài, nơi chúng khó có thể gây ảnh hưởng đến các phần ở vòng tròn bên trong.&lt;/p&gt;
+
+&lt;h2 id=&quot;only-four-circleschỉ-4-vòng-tròn-đó-thôi-là-đủ-ư&quot;&gt;Only Four Circles?(Chỉ 4 vòng tròn đó thôi là đủ ư?)&lt;/h2&gt;
+
+&lt;p&gt;Các vòng tròn là giản đồ. Nhiều lúc bạn cần nhiều hơn 4 vòng tròn. Không có quy tắc nào nói rằng bạn luôn phải có chỉ 4 vòng tròn. Tuy nhiên, Dependency Rule luôn được áp dụng. Sự phụ thuộc mã nguồn luôn hướng vào bên trong. Khi bạn di chuyển vào tâm vòng tròn, mức độ trừu tượng tăng lên. Vòng tròn ngoài cùng là các chi tiết cụ thể ở mức thấp nhất. Bạn càng di chuyển vào trong, phần mềm càng phát triển trừu tượng hơn, và đóng gói các điều khoản ở cấp cao hơn. Vòng tròn trong cùng chỉ chứa những gì chung nhất, khó có thể chia nhỏ được nữa như các interface chẳng hạn.&lt;/p&gt;
+
+&lt;h2 id=&quot;crossing-boundaries&quot;&gt;Crossing boundaries&lt;/h2&gt;
+
+&lt;p&gt;Góc bên phải, phía dưới của sơ đồ đầu bài là ví dụ về cách chúng ta vượt qua những vòng tròn.&lt;/p&gt;
+
+&lt;p&gt;Nó chỉ ra rằng, Controllers và Presenters liên lạc với Use Case trong layer kế tiếp. Chú ý luồng điều khiển, nó bắt đầu từ controller, di chuyển qua các use case và sau đó thực thi trong presenter. Cũng lưu ý đối với các dependencies, chúng trỏ vào bên trong ứng với các trường hợp sử dụng.&lt;/p&gt;
+
+&lt;p&gt;Tác giả Uncle Bob thường giải quyết vấn đề này bằng cách sử dụng Dependency Inversion Principle(mỗi thành phần hệ thống (class, module, …) chỉ nên phụ thuộc vào các abstractions, không nên phụ thuộc vào các concretions hoặc implementations cụ thể). Trong một ngôn ngữ như Java, tác giả sẽ sắp xếp các interfaces và các mối quan hệ thừa kế sao cho các dependencies phản ánh luồng kiểm soát tại các điểm chính xác trên toàn bộ ranh giới.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-data-crosses-the-boundaries&quot;&gt;What data crosses the boundaries&lt;/h2&gt;
+
+&lt;p&gt;Dữ liệu đi qua các vùng ranh giới là cấu trúc dữ liệu đơn giản. Chúng ta không muốn truyền Entity hoặc các bản ghi của cơ sở dữ liệu. Chúng ta cũng không muốn cấu trúc dữ liệu có bất kỳ phụ thuộc nào mà vi phạm Dependency Rule.&lt;/p&gt;
+
+&lt;p&gt;Lấy ví dụ, nhiều framework cơ sở dữ liệu trả về định dạng dữ liệu phù hợp cho một truy vấn. Chúng ta có thể gọi nó là một RowStructure. Rõ ràng ta không muốn truyền kiểu định dạng dữ liệu này vào các vòng bên trong vì nó vi phạm Dependency Rule, các vòng tròn bên trong có thể biết được đôi chút về vòng tròn bên ngoài. Chính vì thế, khi truyền dữ liệu vào vòng tròn bên trong, chúng luôn phải là định dạng phù hợp với vòng tròn đó.&lt;/p&gt;
+
+&lt;h2 id=&quot;kết-luận&quot;&gt;Kết luận&lt;/h2&gt;
+
+&lt;p&gt;Tuân theo các quy tắc đơn giản này không phải là một việc quá khó khăn nhưng nó sẻ giúp bạn tiết kiệm được nhiều thời gian trong tương lai. Bằng việc tách hệ thống thành các layer, đồng thời tuân theo Dependency Rule, bạn sẽ xây dựng được một hệ thống dế test, cùng với những lợi ích kèm theo như đã đề cập ở trên. Khi bất kỳ bộ phận bên ngoài của hệ thống trở nên lỗi thời, chẳng hạn như database, hoặc web framework, bạn hoàn toàn có thể thay thế chúng với một effort tối thiểu.&lt;/p&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="solid" /><category term="ood" /><category term="oop" /><summary type="html">Trước khi đi vào nội dung chính của bài viết này, mình xin nói qua về quá trình mình đã tiếp cận với các kiểu kiến trúc trong việc xây dựng các ứng dụng web.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Solid Principle</title><link href="http://localhost:4000/solid-principle/" rel="alternate" type="text/html" title="Solid Principle" /><published>2017-12-12T01:01:00+07:00</published><updated>2017-12-12T01:01:00+07:00</updated><id>http://localhost:4000/solid-principle</id><content type="html" xml:base="http://localhost:4000/solid-principle/">&lt;p&gt;Hệ thống phần mềm tốt phãi bắt đầu bằng code sạch. Cũng giống như việc xây nhà, bắt đầu chúng ta cần những viên gạch tốt đã, nhưng những viên gạch đã không tốt thì kiến ​​trúc của tòa nhà không còn quan trọng nữa vì nó đã dễ dàng sụp đổ rồi. Một mặt khác, khi bạn có các viên gạch tốt rồi nhưng đôi lúc từ chúng bạn vẫn tạo ra một mớ hổn độn từ những viên gạch tốt đó. Do đó Solid đến và giúp chúng ta xây dựng các kiến trúc tốt dựa trên các viên gạch tốt.&lt;/p&gt;
+
+&lt;p&gt;Nguyên tắc SOLID cho chúng ta biết cách sắp xếp các hàm, cấu trúc dữ liệu của chúng ta vào các lớp và kết nối chúng lại với nhau để xây dựng nên hệ thống. Việc sử dụng từ class không có nghĩa rằng các nguyên tắc này chỉ áp dụng cho phần mềm hướng đối tượng. Một class đơn giản là một nhóm các hàm và dữ liệu được ghép đôi. Mọi hệ thống phần mềm đều có các nhóm như vậy cho dù chúng có được gọi là các class hay không thì nguyên tắc SOLID vẫn sẻ áp dụng được cho các nhóm đó.&lt;/p&gt;
+
+&lt;p&gt;Vậy mục tiêu của các nguyên tắc trong SOLID là gì? Là tạo ra các cấu trúc ở mức mid-level của phần mềm có các yêu cầu như dễ dàng tiếp nhận sự thay đổi, dễ hiểu cho người mới, dễ sử dụng lại. Từ mid-level đề cập đến thực tế là các nguyên tắc này được áp dụng bởi các lập trình viên làm việc ở cấp modules, SOLID được áp dụng ngay trên mức của code implement và giúp xác định các loại cấu trúc phần mềm được sử dụng trong các modules và các components.&lt;/p&gt;
+
+&lt;p&gt;Chỗ này hơi khó hiểu nhể, có thể tưởng tượng rằng một ngôi nhà nên được chia đầu tiên thành các components như các bức tường nhỏ, sau đó ghép nối lại thì SOLID được dùng ở mức các Engineer tạo nên các bức tường đó. Nói cách khác, khi muốn xây dựng kiến trúc tốt cho một ngôi nhà hay phần mềm chúng ta phãi thiết kế tốt từ từng bức tường, từng modules từng component để sao cho nó có thể dễ dàng tiếp nhận sự thay đổi, dễ dùng dễ hiểu cho người mới và hơn nữa là dễ dàng tái sử dụng module/component đó.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SOLID&lt;/strong&gt; được &lt;strong&gt;Robert C. Martin&lt;/strong&gt; đưa ra với năm nguyên tắc thiết kế hướng đối tượng (OOD) sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;– Single responsibility principle (SRP)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;– Open/closed principle (O)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;– Liskov substitution principle (L)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;– Interface segregation principle (I)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;– Dependency inversion principle (D)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Chúng ta sẻ tiếp tục phân tích rõ từng nguyên tắc.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-the-single-responsibility-principlesrp&quot;&gt;1. The Single Responsibility Principle(SRP):&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;The Single Responsibility Principle(SRP)&lt;/strong&gt;: Mỗi một class chỉ đảm nhiệm một trách nhiệm duy nhất,một hệ thống phần mềm có cấu trúc tốt là hệ thống có các module/component mà chúng chỉ có một và chỉ một lý do để thay đổi.
+Đọc đến đây chúng ta sẻ có thể dễ nhầm lẩn với một nguyên tắc khác đó là việc các hàm nên làm một và chỉ một việc duy nhất, đó là một nguyên tắc chúng ta thường sử dụng khi tái cấu trúc các hàm lớn thành các hàm nhỏ. Đó không phãi là SRP.&lt;/p&gt;
+
+&lt;p&gt;Để hiểu rõ nguyên tắc này chúng ta sẻ xét một ví dụ mà ta đã vi phạm nguyên tắc này:
+Giả sử hệ thống quản lí tiền lương nhân viên của chúng ta có chứa 4 thực thể sau: Employee, CTO, CFO, COO. Class Employee của chúng ta sẻ có chứa ba phương thức sau:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;caculatePay()&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;reportHours()&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;save()&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Cách thiết kế class Employee của chúng ta đã vi phạm SRP bởi vì nó có ba phương thức chịu trách nhiệm với 3 thực thể rất khác nhau.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Phương thức caculatePay() được gọi bởi phòng kế toán và báo cáo cho CFO.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Phương thức reportHours() được gọi bởi phòng HR và báo cáo cho COO.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Phương thức save() được gọi bởi database admin và báo cáo cho CTO.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Bằng việc đưa ba phương thức trên vào một class Employee đơn lẻ, chúng ta đã vô tình kết hợp sự phụ thuộc của các thực thể khác lại với nhau, ở đây có thể là CFO, COO, CTO đã vô tình phụ thuộc vào nhau. Lấy ví dụ như sau:&lt;/p&gt;
+
+&lt;p&gt;Giả xử rằng hàm &lt;strong&gt;caculatePay()&lt;/strong&gt; và hàm &lt;strong&gt;reportHours()&lt;/strong&gt; cần có giờ làm việc của từng nhân viên và chúng dùng chung một thuật toán để tính giờ làm việc, rõ ràng là khi đó chúng ta sẻ không muốn việc duplicate code xãy ra ở đây, chúng ta sẻ viết một hàm &lt;strong&gt;regularHours()&lt;/strong&gt; cho việc sử dụng của hai hàm &lt;strong&gt;caculatePay()&lt;/strong&gt; và &lt;strong&gt;reportHours()&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Đến một ngày đẹp trời, nhóm CFO quyết định rằng việc tính toán giờ làm việc &lt;strong&gt;regularHours()&lt;/strong&gt; cần được tinh chỉnh lại trong lúc nhóm COO vẫn thấy hàm &lt;strong&gt;regularHours()&lt;/strong&gt; như thế là ổn rồi không muốn bất cứ thay đổi gì đối với nó nữa.&lt;/p&gt;
+
+&lt;p&gt;Một developer được giao nhiệm vụ tinh chỉnh lại hàm &lt;strong&gt;regularHours()&lt;/strong&gt; theo một mục đích mới nào đó, anh ta làm việc nhưng đâu biết rằng hàm &lt;strong&gt;reportHours()&lt;/strong&gt; cũng gọi đến nó, việc tinh chỉnh được thực hiện xong, hàm &lt;strong&gt;caculatePay()&lt;/strong&gt; chạy trơn tru đúng yêu cầu và được áp dụng ngay. Sau một thời gian người ta nhận thấy hàm &lt;strong&gt;reportHours()&lt;/strong&gt; đã đi sai hướng, các số liệu báo cáo lên sai lệch ảnh hưởng đến tài chính công ty.&lt;/p&gt;
+
+&lt;p&gt;Đó là một ví dụ vi phạm, khi gặp các trường hợp đó chúng ta nên phân tách các phương thức ra các class riêng lẻ và ngược lại, cách dễ nhất để phá các ứng dụng là tạo ra các GOD classes(một GOD class là một class biết quá nhiều hoặc làm quá nhiều, GOD class là một ví dụ về một ví dụ về anti pattern), một God class giữ reference đến nhiều thực thể khác cũng như giữ nhiều trách nhiệm đâm ra dễ gây ra các vấn đề tương tự như ví dụ trên.&lt;/p&gt;
+
+&lt;h3 id=&quot;2-openclosed-principle-ocp&quot;&gt;2. Open/closed principle (OCP):&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Theo nguyên lý này, mỗi khi ta muốn thêm chức năng cho chương trình, chúng ta nên viết class mới mở rộng từ class cũ ( bằng cách kế thừa hoặc sở hữu class cũ) không nên sửa đổi class cũ:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Tất nhiên rồi phãi không nào, đây là lý do cơ bản nhất mà chúng ta nghiên cứu software architecture. Rõ ràng là nếu muốn mở rộng chức năng một cách đơn gỉan mà phãi thay đổi lớn đối với phần mềm thì các kiến ​​trúc sư của hệ thống phần mềm đó đã thất bại rồi.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/1.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Mục đích là thế nhưng làm thì như nào để đạt được mục đích nguyên tắc đó, chúng ta cùng xét một ví dụ như sau:&lt;/p&gt;
+
+&lt;p&gt;Giả xử hệ thống của bạn đang có một chức năng báo cáo tóm tắt tài chính, dữ liệu được hiển thị trên giao diện web và có thể cuộn cho bản tóm tắt dài. Rồi một ngày đẹp trời khách hàng muốn bạn thêm chức năng thể hiện báo cáo đó trên trên PDF với tiêu đề và phân trang hợp lí, các số liệu cần được làm nổi bật và gửi cho người dùng.&lt;/p&gt;
+
+&lt;p&gt;Rõ ràng, một lượng code sẻ phãi được viết lại để đáp ứng yêu cầu trên nhưng bao nhiêu code củ sẻ phãi thay đổi? Kiến trúc tốt sẻ giảm thiểu lượng code phãi thay đổi xuống mức tối thiểu nhất và lí tưởng nhất là không có dòng code nào phãi thay đổi.&lt;/p&gt;
+
+&lt;p&gt;Làm thế nào để đạt được điểu đó? Đầu tiên phãi tách biệt những thực thể mà chúng có thể phãi thay đổi vì các lí do khác nhau(áp dụng SRP) sau đó bố trí sự phụ thuộc của chúng đúng cách(sử dụng DIP nói sau). Bằng cách đó chúng ta sẻ đưa luồng dữ liệu hướng như dưới, mô tả một số quy trình kiểm tra xử lí dữ liệu có thể trình bày, sau đó trình bày theo định dạng phù hợp để thể hiện trên web và trên PDF.&lt;/p&gt;
+
+&lt;p&gt;Thông tin chi tiết cần thiết ở đây là việc tạo báo cáo liên quan đến hai trách nhiệm riêng biệt: tính toán thông tin số liệu tài chính và việc trình bày data đó thành các model thân thiện với web và pdf.&lt;/p&gt;
+
+&lt;p&gt;Sau khi thực hiện sự tách biệt này, chúng ta cần phải tổ chức các phụ thuộc code để đảm bảo rằng những thay đổi đối với một trong những trách nhiệm đó không gây ra những thay đổi ở bên kia. Ngoài ra, cách tổ chức mới phải đảm bảo rằng hành vi có thể được mở rộng mà không huỷ bỏ các sửa đổi.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/2.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Chúng ta thực hiện điều này bằng cách phân vùng các quy trình thành các class và tách các class đó thành các component, như được thể hiện bằng các dòng kép trong sơ đồ trong hình dưới.&lt;/p&gt;
+
+&lt;p&gt;Trong hình này, thành phần ở phía trên bên trái là Controller, phía trên bên phải là Interactor, phía dưới bên phải là database, ở phía dưới bên trái có bốn thành phần đại diện cho đối tượng hiển thị và data hiển thị.&lt;/p&gt;
+
+&lt;p&gt;Các  được đánh dấu bằng &lt;i&gt; là các interface; những người được đánh dấu bằng &lt;DS&gt; là các cấu trúc dữ liệu.&lt;/DS&gt;&lt;/i&gt;&lt;/p&gt;
+
+&lt;p&gt;Các mũi tên đang sử dụng để thể hiện các mối quan hệ. Đầu mũi tên trỏ tới thể hiện mối quan hệ thừa kế. Điều đầu tiên cần lưu ý là tất cả các phụ thuộc là các phụ thuộc code. Một mũi tên chỉ từ class A đến class B có nghĩa là code của lớp A reference đế class B, nhưng class B không cần biết gì đến class A.&lt;/p&gt;
+
+&lt;p&gt;Như vậy, trong hình trên, FinancialDataMapper reference đến FinancialDataGateway thông qua một mối quan hệ implement interface, nhưng FinancialGateway không biết gì về FinancialDataMapper.
+&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/3.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Điều tiếp theo cần lưu ý là tất cả mỗi quan hệ đều là một chiều và mỗi đối tượng chỉ chịu sự phụ thuộc đến duy nhất một thực thể khác như thể hiện trong hình dưới, những mũi tên hướng tới các thành phần mà chúng ta muốn bảo vệ khỏi thay đổi.&lt;/p&gt;
+
+&lt;p&gt;Nghĩa là sao? là nếu thành phần A cần được bảo vệ khỏi những thay đổi trong thành phần B, thì thành phần B sẽ phụ thuộc vào thành phần A. Chúng ta muốn bảo vệ Controller khỏi những thay đổi trong Presenters. Chúng ta muốn bảo vệ các Presenters khỏi những thay đổi trong Views. Chúng tôi muốn bảo vệ Interactor khỏi những thay đổi trong bất cứ điều gì. Interactor ở vị trí phù hợp nhất với OCP.&lt;/p&gt;
+
+&lt;p&gt;Các thay đổi đối với Database hoặc Controller hoặc Presenters hoặc Views sẽ không ảnh hưởng đến Interactor.
+Tại sao Interactor nên giữ một vị thế đặc quyền như vậy? Bởi vì nó chứa các business rule. Interactor chứa các chính sách cao nhất của ứng dụng. Tất cả các thành phần khác đang xử lý các mối quan tâm ngoại vi còn interactor giao dịch với mối quan tâm trung tâm. Mặc dù Controller là ngoại vi với Interactor, nhưng nó vẫn là trung tâm của các Presenters và Views. Và trong khi các diễn giả có thể là ngoại vi với Controller nhưng chúng là trung tâm của Views.&lt;/p&gt;
+
+&lt;p&gt;Lưu ý cách thức này tạo ra một hệ thống phân cấp bảo vệ dựa trên khái niệm “level”. Các tác nhân tương tác là khái niệm mức cao nhất, vì vậy chúng được bảo vệ nhất. View nằm trong số các khái niệm cấp thấp nhất, vì vậy chúng được bảo vệ ít nhất. Presenters có cấp độ cao hơn Views nhưng cấp thấp hơn Controller hoặc Interactor.&lt;/p&gt;
+
+&lt;p&gt;Đây là cách OCP hoạt động ở cấp kiến ​​trúc. Các kiến trúc chia chức năng riêng biệt dựa trên cách thức – tại sao và khi nào chúng thay đổi, sau đó tổ chức chức năng được phân tách thành một hệ thống phân cấp các thành phần. Các thành phần cấp cao hơn trong phân cấp đó được bảo vệ khỏi những thay đổi được thực hiện cho các thành phần cấp thấp hơn.&lt;/p&gt;
+
+&lt;p&gt;Nói tóm lại OCP là một trong nhưng sức mạnh đứng đằng sau kiến trúc hệ thống tốt, giúp hệ thống dễ dàng mở rộng mà không phãi chịu sức ép từ những thay đổi trong mã nguồn, mục tiêu này đạt được khi chúng ta chia phân vùng hệ thống thành các component và sắp xếp chúng thành một hệ thống phân cấp sự phụ thuộc để bảo vệ các thành phần cấp cao khỏi sự thay đổi của các thành phần cấp thấp.&lt;/p&gt;
+
+&lt;h3 id=&quot;3-liskov-substitution-principlelsp&quot;&gt;3. Liskov Substitution Principle(LSP):&lt;/h3&gt;
+
+&lt;p&gt;Nguyên tắc này được phát biểu như sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Trong một chương trình, các object của class con có thể thay thế class cha mà không làm thay đổi tính đúng đắn của chương trình&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Không hiểu đúng không nào? Có thể nghĩ như này: Khi các class A kế thừa từ class B thì phãi có hai điều kiện sau:&lt;/p&gt;
+
+&lt;p&gt;– Class B có các behaviors nào thì A phãi có các behaviors đó.&lt;/p&gt;
+
+&lt;p&gt;– Các phương thức của class cơ sở thì phãi đảm bảo có thể sử được trong các class con của nó hay nói cách khác các phương thức của các class cha phãi luôn hoạt động được và chính xác trên tất cả các class kế thừa từ nó.&lt;/p&gt;
+
+&lt;p&gt;Để hiểu hơn ta xét ví dụ như sau:&lt;/p&gt;
+
+&lt;p&gt;Giả xử ta có class Chim có phương thức là Bay()&lt;/p&gt;
+
+&lt;p&gt;– Class Đại Bàng thừa kế class Chim cũng có đủ phương thức Bay() và hoạt động đúng như class chim() trường hợp này thoả mãn LSP.&lt;/p&gt;
+
+&lt;p&gt;– Class Chim Cánh cụt thừa kế class Chim nhưng phương thức Bay không khả dụng cho nên là vi phạm LSP.&lt;/p&gt;
+
+&lt;p&gt;– Class Chim Điện thừa kế class Chim cũng có phương thức bay, nhưng phương thức Bay này có thêm yêu cầu là phãi có điện thì mới bay được cho nên vi phạm LSP.&lt;/p&gt;
+
+&lt;p&gt;LSP cần được mở rộng đến mức kiến trúc. Một sự vi phạm đơn giản về khả năng thay thế, có thể làm cho kiến trúc của hệ thống bị ô nhiễm với một số lượng đáng kể các cơ chế bổ sung.&lt;/p&gt;
+
+&lt;h3 id=&quot;4-interface-segregation-principleisp&quot;&gt;4. Interface segregation principle(ISP):&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/4.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nguyên tắc này có thể nói ngắn gọn là thay vì dùng 1 interface lớn, ta nên tách thành nhiều interface nhỏ, với nhiều mục đích cụ thể, để dễ hiểu hơn chúng ta cùng xét ví dụ như hình trên, mỗi user sử dụng các phương thức của class OPS, giả sử rằng User1 chỉ sử dụng op1, User2 chỉ sử dụng op2, User3 chỉ sử dụng op3.&lt;/p&gt;
+
+&lt;p&gt;Khi đó User1 vô tình phụ thuộc vào op2 và op3 mặc dù nó không gọi chúng, sự phụ thuộc này khiến cho User1 phãi được implement lại khi op2 và op3 bị thay đổi mặc dù nó không dùng hai hàm đó, hơn thế nữa việc gom quá nhiều phương thức vào một đối tượng khiến cho chúng ta nhọc nhằng trong việc implement cho nên chúng ta nên giải quyết bằng cách tách biệt các phương thức thành các interface nhỏ như hình bên dưới.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/5.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Nếu vấn đề này được triển khai trên ngôn ngữ tỉnh như Golang thì code của User1 sẻ phụ thuộc vào U1Ops và op1 nhưng sẻ không phụ thuộc vào OPS do đó khi có thay đổi đối với OPS mà User1 không quan tâm sẻ không làm cho User1 bị biên dịch lại và triển khai lại.&lt;/p&gt;
+
+&lt;h3 id=&quot;5-dependency-inversion-principledip&quot;&gt;5. DEPENDENCY INVERSION PRINCIPLE(DIP):&lt;/h3&gt;
+
+&lt;p&gt;Nguyên tắc này cho chúng ta biết rằng các hệ thống linh hoạt nhất là các hệ thống phụ thuộc vào mã nguồn chỉ tham chiếu đến trừu tượng hóa, chứ không chỉ các concretions.&lt;/p&gt;
+
+&lt;p&gt;Hãy tưởng tượng phần mềm của chúng ta sẻ như thế nào trước khi có một cơ chế an toàn và thuận tiện cho đa hình, luồng đi của phần mềm này sẻ như cây mô tả bên dưới, các hàm main được gọi là các hàm level cao chúng gọi các hàm level trung bình và các hàm level trung bình gọi các hàm ở level thấp. Tuy nhiên có thể thấy rằng trong cây đó các phụ thuộc code không đi theo hướng của luồng gọi.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/6.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/7.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Để hàm main gọi một trong các hàm level cao, nó phải reference đến tên của module chứa hàm đó. Trong C chúng ta dùng #include trong Java và Go ta dùng câu lệnh import. Thật vậy, mỗi phần chứa hàm gọi buộc phải refer đến tên của module có chứa hàm được gọi. Rõ ràng sự phụ thuộc được thể hiện rằng hàm Main sẻ phụ thuộc vào các hàm dưới nó. Tuy nhiên, khi đa hình được đưa vào sử dụng, một điều rất khác sẻ xảy ra như sau.&lt;/p&gt;
+
+&lt;p&gt;Chúng ta có thể thấy rằng module HL1 vẫn gọi hàm F () trong module ML1 nhưng thực tế là nó gọi hàm này thông qua một interface mà khi chạy thì interface thực sự không tồn tại. HL1 đơn giản gọi F () trong ML1 mặc dù là thể hiện gián tiếp.&lt;/p&gt;
+
+&lt;p&gt;Tuy nhiên lưu ý rằng sự phụ thuộc mã nguồn (mối quan hệ thừa kế) giữa ML1 và interface trỏ theo hướng ngược lại so với luồng điều khiển. Điều này được gọi là sự đảo ngược phụ thuộc và các tác động của nó đối với kiến trúc phần mềm là rất sâu sắc. Thực tế là các ngôn ngữ OOP cung cấp tính đa hình an toàn và thuận tiện cho nên bất kỳ sự phụ thuộc mã nguồn nào bất kể nó ở đâu đều có thể đảo ngược.&lt;/p&gt;
+
+&lt;p&gt;Bây giờ hãy nhìn lại luồng đi trong hình 6 và các phụ thuộc mã nguồn của nó thì bất kỳ phụ thuộc mã nguồn nào đều có thể được quay lại bằng cách chèn một interface giữa chúng. Với cách tiếp cận này các kiến trúc implement trong các hệ thống được viết bằng ngôn ngữ OOP có thể kiểm soát hướng của tất cả các phụ thuộc mã nguồn trong hệ thống. Đó là sức mạnh mà OOP cung cấp. Bạn có thể làm gì với sức mạnh đó? Ví dụ, bạn có thể sắp xếp lại các phụ thuộc mã nguồn của hệ thống để cơ sở dữ liệu và giao diện người dùng (UI) phụ thuộc vào các quy tắc nghiệp vụ chứ không phải là cách khác.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-12-12-solid-principle/8.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Điều này có nghĩa là gì? Là giao diện người dùng và cơ sở dữ liệu có thể được implement để bổ sung cho thể hiện các business logic, mã nguồn của business logic không bao giờ cần biết đến giao diện người dùng hoặc cơ sở dữ liệu. Kết quả là, các business logic cũng như giao diện người dùng và cơ sở dữ liệu có thể được biên dịch thành ba thành phần hoặc đơn vị triển khai riêng biệt và thành phần chứa business logic sẽ không phụ thuộc vào các thành phần có chứa giao diện người dùng và cơ sở dữ liệu, các thay đổi đối với giao diện người dùng hoặc cơ sở dữ liệu không có bất kỳ ảnh hưởng nào đến business logic. Tóm lại, khi mã nguồn trong một thành phần thay đổi thì chỉ thành phần đó cần phải được triển khai lại. Đây là khả năng triển khai độc lập, nếu các module trong hệ thống của bạn có thể được triển khai độc lập, thì chúng có thể được phát triển độc lập bởi các nhóm khác nhau.&lt;/p&gt;
+
+&lt;p&gt;Qua việc tìm hiểu nguyên tắc này chúng ta cũng có thể thấy được sức mạnh của OOP đặc biệt là tính đa hình, thông qua việc sử dụng đa hình chúng ta có thể giành quyền kiểm soát tuyệt đối đối với mọi phụ thuộc mã nguồn trong hệ thống.&lt;/p&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="solid" /><category term="ood" /><category term="oop" /><summary type="html">Hệ thống phần mềm tốt phãi bắt đầu bằng code sạch. Cũng giống như việc xây nhà, bắt đầu chúng ta cần những viên gạch tốt đã, nhưng những viên gạch đã không tốt thì kiến ​​trúc của tòa nhà không còn quan trọng nữa vì nó đã dễ dàng sụp đổ rồi. Một mặt khác, khi bạn có các viên gạch tốt rồi nhưng đôi lúc từ chúng bạn vẫn tạo ra một mớ hổn độn từ những viên gạch tốt đó. Do đó Solid đến và giúp chúng ta xây dựng các kiến trúc tốt dựa trên các viên gạch tốt.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Hiểu Về Call Stack - Heap - Queue</title><link href="http://localhost:4000/hieu-ve-call-stack-heap-queue/" rel="alternate" type="text/html" title="Hiểu Về Call Stack - Heap - Queue" /><published>2017-08-14T12:45:00+07:00</published><updated>2017-08-14T12:45:00+07:00</updated><id>http://localhost:4000/hieu-ve-call-stack-heap-queue</id><content type="html" xml:base="http://localhost:4000/hieu-ve-call-stack-heap-queue/">&lt;h2 id=&quot;1-stack&quot;&gt;1. Stack:&lt;/h2&gt;
+
+&lt;p&gt;Ứng với mỗi thread (hoặc 1 goruntine đối với Golang) của chương trình thường có một call stack. Khi ứng dụng bắt đầu được thực thi, các biến cục bộ, địa chỉ hàm, biến tham chiếu đối tượng….sẻ được lưu trữ trong Stack, tùy theo thứ tự gọi mà các thành phần đẩy vào stack được sắp xếp theo đúng thứ tự.
+Khi 1 phương thức kết thúc cũng là lúc các giá trị biến và các tham chiếu đối tương được hủy bỏ — và địa chỉ hàm cũng được hủy bỏ ngay sau đó. Stack lưu trữ dung lượng thấp hơn rất nhiều so với heap.&lt;/p&gt;
+
+&lt;p&gt;Khi lập trình với các ngôn ngữ như Java, Golang… chúng ta thường quan tâm đến stack size. Với Java trong môi trường 64-bit thì JVM mặc định có stack size cho mỗi thread là 1MB và Golang thì mặc định là 2kb.&lt;/p&gt;
+
+&lt;p&gt;Trong Javascript, Golang và đa số các ngôn ngữ lập trình khác, khi chúng ta gọi một hàm để thực thi đồng nghĩa với việc chúng ta push một hàm vào stack, đến khi nào hàm đó thực thi xong và trả về thì mới được pop ra khỏi stack. Thao tác đó được mô tả như sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-08-14-hieu-ve-call-stack-heap-queue/1.gif&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Như hình trên, khi chúng ta thực thi một chương trình, đầu tiên chúng ta sẻ tìm đến hàm main, nơi mà mọi thực thi đều bắt đầu từ đây. Trong chương trình trên ta sẻ có các bước như sau:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;console.log(bar(6))&lt;/strong&gt; được đưa vào stack. Hàm này gọi đến hàm &lt;strong&gt;bar&lt;/strong&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Tiếp theo, &lt;strong&gt;bar(6)&lt;/strong&gt; được đưa vào stack, hàm &lt;strong&gt;bar&lt;/strong&gt; lại tiếp tục gọi hàm &lt;strong&gt;foo&lt;/strong&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Tiếp đó &lt;strong&gt;foo(x,y)&lt;/strong&gt; lại được đưa vào stack.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hàm &lt;strong&gt;foo&lt;/strong&gt; thực thi xong trả kết quả về cho hàm &lt;strong&gt;bar&lt;/strong&gt; và được pop ra khỏi stack.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hàm &lt;strong&gt;bar&lt;/strong&gt; nhận được kết quả từ hàm foo, thực thi xong trả về kết quả cho hàm &lt;strong&gt;console.log()&lt;/strong&gt; và được loại bỏ ra khỏi stack.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hàm &lt;strong&gt;console.log()&lt;/strong&gt; thực thi và được loại bỏ ra khỏi stack.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cuối cùng hàm &lt;strong&gt;main&lt;/strong&gt; cũng được loại bỏ ra khỏi stack, chương trình kết thúc.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Đôi lúc chúng ta tạo ra một vòng lặp vô hạn khi chúng ta gọi nhiều đệ quy, với chrom thì thường giới hạn bởi 16.000 frames, nếu vượt ra khỏi con số đó thì sẻ sinh ra lỗi như sau :v&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2017-08-14-hieu-ve-call-stack-heap-queue/2.png&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2-heap&quot;&gt;2. Heap:&lt;/h3&gt;
+
+&lt;p&gt;Bộ nhớ Heap dùng để cấp phát bộ nhớ cho object, biến toàn cục.
+Bất cứ khi nào khai báo đối tượng thì các giá trị của đối tượng sẽ được lưu trữ trong Heap (chú ý giá trị đối tượng chứ ko phải biến tham chiếu đối tượng) và có thể truy cập bất cứ khi nào trong chương trình, bộ nhớ tồn tại trong suốt quá trình thực thi chương trình&lt;/p&gt;
+
+&lt;p&gt;Khi kết thúc 1 phương thức các biến tham chiếu đối tượng bị hủy trong stack và các tham chiếu tới các dữ liệu lưu trong Heap cũng bị hủy bỏ javascript sẻ dùng trình thu dọn rác để thực hiện kiểm tra các tham chiếu.. nếu ko còn tham chiếu nào tới biến lưu trữ trên vùng nhớ Heap thì các vùng nhớ đó sẽ được thu gom.&lt;/p&gt;
+
+&lt;h3 id=&quot;3-queue&quot;&gt;3. Queue:&lt;/h3&gt;
+
+&lt;p&gt;Đối với Javascript runtime thì có thêm một thành phần nữa đó là queue, đây là danh sách các message cần được sử lí và các hàm callback liên quan thực thi. Nói dễ hiểu hơn là các message này sẻ được lưu vào queue để phản hồi các sự kiện async bên ngoài chẳng hạn như sự kiện nhấp chuột hay một http reuquest với một callback được cung cấp.&lt;/p&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="solid" /><category term="ood" /><category term="oop" /><summary type="html">1. Stack:</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Stack trong Golang</title><link href="http://localhost:4000/stacks-trong-golang/" rel="alternate" type="text/html" title="Stack trong Golang" /><published>2017-02-10T11:20:00+07:00</published><updated>2017-02-10T11:20:00+07:00</updated><id>http://localhost:4000/stacks-trong-golang</id><content type="html" xml:base="http://localhost:4000/stacks-trong-golang/">&lt;p&gt;Khi bắt đầu làm việc với Golang mình được giới thiệu rằng Golang nó cung cấp một thứ gọi là Goruntine - Một thread nhỏ nhẹ với chỉ 2kb stack size. Nhưng mà thế đếu nào, mặc định Java nó cấp phát tận 1MB vẫn thường xãy ra stack overflow, đây 2kb có mà nát hết à. Tuy nhiên Go nó có cách implement để điều đó không xãy ra và có thể hay hơn nũa.&lt;/p&gt;
+
+&lt;h2 id=&quot;segmented-stacks&quot;&gt;Segmented stacks:&lt;/h2&gt;
+
+&lt;p&gt;Trong Go 1.2, nó sử dụng cái gọi là Segmented Stacks, trong cách tiếp cận này, stack không liên tục và lớn dần. Mỗi stack bắt đầu bởi một segment duy nhất. Khi stack cần lớn lên một segment sẻ được cấp phát và được liên kết với phần trước. Một stack là một danh sách được liên kết từ hai hoặc nhiều segments.
+&lt;img src=&quot;/assets/images/2017-02-10-stacks-trong-golang/1.png&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ưu điểm của phương pháp này là stack có thể bắt đầu nhỏ và phát triển hoặc thu nhỏ khi cần thiết. Tuy nhiên khi đó sẻ có một vấn đề nãy sinh:
+Hãy tưởng tượng có các lời gọi hàm xãy ra khi stack gần đầy, bắt buộc stack phãi phát triển và segment mới phãi được phân bổ. Khi hàm đó return segments sẻ được giải phóng và stack co lại. Các cuộc gọi hàm đó xãy ra thường xuyên như sau:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;big&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;big&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8180&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;byte&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// do something with x&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Gọi đến hàm &lt;strong&gt;big ()&lt;/strong&gt; sẻ khiến segment mới được cấp phát, stack phình ra và segment sẻ được giải phóng và stack thu lại khi hàm return. Công đoạn đó xãy ra liên tục vì nó đang trong vòng for. Chi phí cho việc cấp phát và thu hồi các segment trở nên đáng kể. Đây gọi là “hot split” trong cộng đồng Go và người Rust gọi đó là “stack thrashing”.&lt;/p&gt;
+
+&lt;h3 id=&quot;contiguous-stacks&quot;&gt;Contiguous stacks&lt;/h3&gt;
+
+&lt;p&gt;“Hot split” đã được giải quyết trong Go 1.3 bằng cách tạo ra &lt;strong&gt;contiguous stacks&lt;/strong&gt;.
+Bây giờ khi một stack cần phát triển, thay vì cấp phát một segment mới, runtime sẽ:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Tạo một stack mới lớn hơn một chút.&lt;/li&gt;
+  &lt;li&gt;Sao chép nội dung của stack sang stack mới&lt;/li&gt;
+  &lt;li&gt;Điều chỉnh lại mọi con trỏ được sao chép để trỏ đến địa chỉ mới&lt;/li&gt;
+  &lt;li&gt;Phá hủy stack cũ đi.&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="nodejs" /><category term="eventloop" /><category term="singlethreaded" /><summary type="html">Khi bắt đầu làm việc với Golang mình được giới thiệu rằng Golang nó cung cấp một thứ gọi là Goruntine - Một thread nhỏ nhẹ với chỉ 2kb stack size. Nhưng mà thế đếu nào, mặc định Java nó cấp phát tận 1MB vẫn thường xãy ra stack overflow, đây 2kb có mà nát hết à. Tuy nhiên Go nó có cách implement để điều đó không xãy ra và có thể hay hơn nũa.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Giới Thiệu Ngôn Ngữ Golang</title><link href="http://localhost:4000/gioi-thieu-ngon-ngu-golang/" rel="alternate" type="text/html" title="Giới Thiệu Ngôn Ngữ Golang" /><published>2017-01-28T21:20:00+07:00</published><updated>2017-01-28T21:20:00+07:00</updated><id>http://localhost:4000/gioi-thieu-ngon-ngu-golang</id><content type="html" xml:base="http://localhost:4000/gioi-thieu-ngon-ngu-golang/">&lt;p&gt;Hiện tại có rất nhiều ngôn ngữ mạnh mẻ cho việc xây dựng ứng dụng web phía back-end như Java, C#, Php, Javascript(Node.js), Ruby, Python…, trước đó thì mình làm việc với Javascript-Node.js tuy nhiên hôm nay, mình sẻ giới thiệu với các bạn một ngôn ngữ có vẻ mới một chút đó là Golang(Go).&lt;/p&gt;
+
+&lt;p&gt;Go là ngôn ngữ lập trình được phát triển bởi Google và cộng đồng mã nguồn mở bắt đầu từ năm 2007 và ra phiên bản đầu tiên vào tháng 12 năm 2012. Go là một ngôn ngữ tỉnh, có khả năng tự động dọn dẹp rác, biên dịch tự nhiên, concurrent và rất giống C về cú pháp. Sau đây là một vài đặc điểm đáng chú ý của nó:&lt;/p&gt;
+
+&lt;h3 id=&quot;go-là-ngôn-ngữ-tối-giản-với-thiết-kế-thực-dụng-&quot;&gt;Go là ngôn ngữ tối giản với thiết kế thực dụng :&lt;/h3&gt;
+
+&lt;p&gt;Ngôn ngữ lập trình Go có thể được mô tả đơn giản bằng ba từ: &lt;strong&gt;đơn giản–tối thiểu–thực dụng&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Nếu bạn nhìn sâu vào thiết kế ngôn ngữ của Go, bạn sẽ thấy cách tiếp cận đơn giản và tối giản của nó, cùng với thiết kế thực dụng. Bạn có thể quan sát sự đơn giản này với tất cả các tính năng của Go bao gồm cả hệ thống kiểu dữ liệu. Nhiều ngôn ngữ lập trình cung cấp quá nhiều tính năng làm cho nó trở nên phức tạp hơn cho các nhà phát triển nên mục tiêu thiết kế của Go là một ngôn ngữ đơn giản và chỉ cung cấp tất cả các tính năng cần thiết tối thiểu để phát triển các hệ thống phần mềm hiệu quả.&lt;/p&gt;
+
+&lt;p&gt;Mặc dù Go có ít tính năng hơn nhưng năng suất không bị ảnh hưởng bởi thiết kế thực dụng của nó. Một lập trình viên Go mới có thể nhanh chóng học được ngôn ngữ và có thể dễ dàng bắt đầu phát triển các ứng dụng chất lượng.&lt;/p&gt;
+
+&lt;p&gt;Trên thực tế có thể gọi Go là một ngôn ngữ lập trình hướng đối tượng (OOP). Tuy nhiên cách tiếp cận hướng đối tượng của Go khác với các ngôn ngữ lập trình như C++, Java và C #. Trên lí thuyết Go không phải là một ngôn ngữ OOP chính thống. Không giống như các ngôn ngữ OOP hiện có, Go không hỗ trợ thừa kế và thậm chí không có từ khóa class. Nó sử dụng các thành phần thừa kế thông qua hệ thống kiểu đơn giản của nó(kế thừa làm sao thì mình sẻ trình bày trong các bài sau). Thiết kế kiểu interface của Go cho thấy tính độc đáo của nó khi so sánh với các ngôn ngữ lập trình hướng đối tượng khác(mình cũng sẻ giới thiệu sâu sau). Đến đây chắc bạn tự hỏi Go có phãi là một ngôn ngữ OOP? Câu trả lời là có thể có cũng có thể không. Ngôn ngữ Go bao gồm tất cả các quy tắc cần thiết để viết các ứng dụng bằng một phương pháp hướng đối tượng, nhưng nó không phải là một ngôn ngữ OOP hoàn chỉnh vì nó thiếu một số tính năng OOP truyền thống.&lt;/p&gt;
+
+&lt;h3 id=&quot;ngôn-ngữ-tĩnh-với-hiệu-suất-cao&quot;&gt;Ngôn ngữ tĩnh với hiệu suất cao&lt;/h3&gt;
+
+&lt;p&gt;Go là một ngôn ngữ lập trình tĩnh, với cú pháp giống gần như 70% ngôn ngữ C. Giống như C và C ++, nó tự động biên dịch mã nguồn thành máy cho nên biên dịch just-In-Time (JIT) là không cần thiết để chạy chương trình của nó(Các ngôn ngữ lập trình như Java và C # sử dụng biên dịch JIT để chạy các ứng dụng.)&lt;/p&gt;
+
+&lt;p&gt;Đối với việc viết ứng dụng, một ngôn ngữ động cho ta rất nhiều năng suất và sự thoải mái bởi vì bạn không phải lo lắng về các kiểu dữ liệu của các biến bạn sử dụng. Nhưng khi làm việc với một ngôn ngữ động, hiệu suất và khả năng maintain của các ứng dụng bị ảnh hưởng. Đôi khi việc debug của một ứng dụng được viết bằng một ngôn ngữ động rất khó khăn do chúng thiếu các kiểu an toàn. Ngay cả bây giờ, các nhà phát triển sử dụng ngôn ngữ tĩnh để tạo code cho ngôn ngữ động của họ ví dụ như các nhà phát triển JavaScript sử dụng ngôn ngữ tĩnh TypeScript để đảm bảo an toàn cho kiểu dữ liệu, cuối cùng biên dịch ra code JavaScript.&lt;/p&gt;
+
+&lt;p&gt;Mặc dù ngôn ngữ tĩnh có thể cung cấp sự an toàn và hiệu suất của kiểu dữ liệu, nhưng làm việc với chúng có thể ảnh hưởng đến năng suất phát triển ứng dụng và việc biên soạn các chương trình lớn có thể mất nhiều thời gian. Sẽ rất tuyệt khi có một ngôn ngữ cung cấp sức mạnh của cả tĩnh và ngôn ngữ động để kết hợp hiệu suất và an toàn của một ngôn ngữ tĩnh với năng suất của một ngôn ngữ động.&lt;/p&gt;
+
+&lt;p&gt;Go là sự kết hợp hoàn hảo của sức mạnh của ngôn ngữ tĩnh và năng suất của ngôn kiểu động. Go có thể được gọi là ngôn ngữ C hiện đại cung cấp hiệu suất gần như C, cùng với năng suất của một ngôn ngữ kiểu động.&lt;/p&gt;
+
+&lt;h3 id=&quot;concurrency---xử-lí-đồng-thời&quot;&gt;Concurrency - Xử lí đồng thời&lt;/h3&gt;
+
+&lt;p&gt;Ngày nay phần cứng máy tính đã phát triển để có nhiều lõi CPU và nhiều sức mạnh hơn, nhưng sức mạnh của máy tính hiện đại không thể được tận dụng bằng cách sử dụng các ngôn ngữ lập trình hiện tại và các công cụ. Khi các ứng dụng được chạy trên các máy chủ công suất cao, có những vấn đề về hiệu suất, mặc dù mới chỉ sử dụng một ít CPU. Trong một số môi trường lập trình, concurrency(sự đồng thời) và parallelism(song song) cho hiệu quả và hiệu năng tốt hơn, nhưng các tính năng này là một thư viện hay framework riêng biệt, chứ không phải là một tính năng tích hợp sẳn ở cấp độ ngôn ngữ, làm tăng thêm sự phức tạp khi bạn viết các ứng dụng concurrent.&lt;/p&gt;
+
+&lt;p&gt;Trong Go, concurrency được xây dựng sẳn và được thiết kế để viết các ứng dụng concurrent hiệu suất cao cho các máy tính hiện đại. Concurrency là một trong những tính năng độc đáo của ngôn ngữ Go và nó được coi là điểm mạnh lớn nhất của ngôn ngữ này.&lt;/p&gt;
+
+&lt;p&gt;Concurrency trong Go được thực hiện bằng hai tính năng độc đáo đó là : goroutines và channel. Một goroutine là một chức năng có thể chạy đồng thời với goroutines khác. Đây là một thread gọn nhẹ(tốn khoản 2kb stack size), trong đó nhiều goroutines thực hiện trong một thread duy nhất cho phép thực thi chương trình và hiệu quả. Tính năng quan trọng nhất của goroutine là nó được quản lý và thực thi bởi Go runtime.&lt;/p&gt;
+
+&lt;p&gt;Nhiều ngôn ngữ lập trình cung cấp hỗ trợ viết các chương trình đồng thời, nhưng chúng chỉ giới hạn trong giao tiếp và đồng bộ hóa giữa các threads đang được thực thi. Và hầu hết các ngôn ngữ hiện tại cung cấp hỗ trợ cho đồng thời thông qua một framework, nhưng không phải là một tính năng tích hợp trong ngôn ngữ, vì vậy nó làm hạn chế khi concurrency được implemented với các ngôn ngữ này.&lt;/p&gt;
+
+&lt;p&gt;Go cung cấp các channel(kênh) cho phép giao tiếp giữa các goroutines và đồng bộ hóa các hành động của chúng. Với các channel, bạn có thể gửi dữ liệu qua lại giữa các goroutine khác nhau. Channel cũng cung cấp mức độ đồng bộ hóa cao hơn giữa các goroutines và đảm bảo rằng hai goroutines đang chạy trong một state xác định. Concurrency là lý do chính cho việc sử dụng Go như một ngôn ngữ để xây dựng các hệ thống phần mềm hiệu quả cao với hiệu năng cao hơn. Mình sẻ giới thiệu cách dùng các chức năng này trong các bài viết tiếp theo.&lt;/p&gt;
+
+&lt;h3 id=&quot;go-biên-dịch-nhanh-hơn&quot;&gt;Go biên dịch nhanh hơn&lt;/h3&gt;
+
+&lt;p&gt;Một trong những thách thức khi viết các ứng dụng C/C ++ là thời gian cần thiết cho việc biên dịch chương trình, điều này rất khó chịu đối với các nhà phát triển khi họ làm việc với các ứng dụng C và C ++ lớn. Go là một ngôn ngữ được thiết kế để giải quyết các thách thức lập trình của các môi trường lập trình hiện tại. Trình biên dịch của nó rất hiệu quả cho việc biên dịch các chương trình một cách nhanh chóng; một ứng dụng Go lớn có thể được biên dịch trong vài giây, điều đó là hấp dẫn đối với nhiều nhà phát triển C và C ++ chuyển sang môi trường lập trình Go.&lt;/p&gt;
+
+&lt;h3 id=&quot;go-là-ngôn-ngữ-đa-năng&quot;&gt;Go là ngôn ngữ đa năng&lt;/h3&gt;
+
+&lt;p&gt;Các ngôn ngữ khác nhau được dùng để phát triển các loại ứng dụng khác nhau với ưu nhược điểm khác nhau. C và C++ thường được sử dụng cho các chương trình hệ thống và cho các hệ thống đòi hỏi hiệu suất cao nhưng làm việc với C/C++ ảnh hưởng đến năng suất phát triển ứng dụng. Một số ngôn ngữ lập trình khác, chẳng hạn như Ruby, Node.js và Python, cho phép phát triển ứng dụng nhanh chóng và tăng năng suất ví dụ như nền tảng Node.js tốt cho việc xây dựng các API JSON và các ứng dụng real-time, nhưng nó sẽ thất bại khi các CPU-intensive programming tasks được thực hiện. Một số ngôn ngữ khác được dùng để xây dựng native mobile app như Objective C hay Swift tuy nhiên hai ngôn ngữ này dường như chỉ có thể làm mobile. Nhiều ngôn ngữ lập trình được dùng cho nhiều trường hợp sử dụng như lập trình hệ thống, hệ thống phân tán(distributed computing), lập trình web app, xây dựng ứng dụng doanh nghiệp(ERP), mobile app… Thì Go là ngôn ngữ làm được điều đó, nó có thể được dùng để xây dựng một loạt các loại ứng dụng bao gồm hệ thống đòi hỏi hiệu năng cao, mobile app, web app…đặc biệt nó được sử dụng để xây dựng các ứng dụng doanh nghiệp và các máy chủ back-end mạnh mẻ. Go cung cấp hiệu suất cao đồng thời vẫn giữ được năng suất cao cho việc phát triển ứng dụng nhờ thiết kế đơn giản và thiết thực. Hệ sinh thái Go (bao gồm Go tool, thư viện chuẩn Go và thư viện của bên thứ ba đi) cung cấp các công cụ và thư viện thiết yếu để xây dựng một loạt các ứng dụng Go. Dự án Go Mobile hỗ trợ xây dựng ứng dụng di động cho cả nền tảng Android và iOS, cho phép nhiều cơ hội hơn với Go.&lt;/p&gt;
+
+&lt;p&gt;Trong thời đại điện toán đám mây, Go là một ngôn ngữ lập trình hiện đại có thể được sử dụng để xây dựng các ứng dụng hệ thống; các ứng dụng phân tán(distributed applications); các chương trình networking; Trò chơi; ứng dụng web; RESTful services; back-end servers; các ứng dụng di động; và cloud-optimized – thế hệ ứng dụng kế tiếp . Go là sự lựa chọn của nhiều hệ thống cách tân sáng tạo như Docker và Kubernetes. Phần lớn các công cụ về hệ sinh thái Docker đang được viết bằng Go.&lt;/p&gt;
+
+&lt;p&gt;OK! chúng ta là dân TIN-HỌC, nghĩa là tin đã rồi mới học, đến đây có lẻ bạn đã thấy được sức mạnh và xu hướng của Golang đồng thời nắm được những đặc điểm chính của Golang, tin rồi thì học thôi nào, cùng tiếp tục đọc các bài viết về Golang tiếp theo của mình nhé! cám ơn các bạn.&lt;/p&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="nodejs" /><category term="eventloop" /><category term="singlethreaded" /><summary type="html">Hiện tại có rất nhiều ngôn ngữ mạnh mẻ cho việc xây dựng ứng dụng web phía back-end như Java, C#, Php, Javascript(Node.js), Ruby, Python…, trước đó thì mình làm việc với Javascript-Node.js tuy nhiên hôm nay, mình sẻ giới thiệu với các bạn một ngôn ngữ có vẻ mới một chút đó là Golang(Go).</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Javascript – Prototype Và Kế Thừa</title><link href="http://localhost:4000/javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class/" rel="alternate" type="text/html" title="Javascript – Prototype Và Kế Thừa" /><published>2016-09-29T12:18:00+07:00</published><updated>2016-09-29T12:18:00+07:00</updated><id>http://localhost:4000/javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class</id><content type="html" xml:base="http://localhost:4000/javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class/">&lt;p&gt;Prototype là khái niệm rất rất quan trọng mà các Javascript Engineer phãi hiểu và tận dụng nó tốt. Đây là thành phần mà theo bản thân mình nghĩ gần như là cốt lõi của Javascript. Trong bài viết này chúng ta sẻ thảo luận và làm rõ những điểm cơ bản của thành phần này.&lt;/p&gt;
+
+&lt;p&gt;Ban đầu Javascript cung cấp hàm Object() và một Object nặc danh có thể được tham chiếu đến bằng cú pháp &lt;strong&gt;Object.prototype&lt;/strong&gt;, bật console lên và thử là biết ngay á mà:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Object &lt;strong&gt;Object.prototype&lt;/strong&gt; có những thuộc tính có sẳn như &lt;strong&gt;valueOf&lt;/strong&gt;, &lt;strong&gt;toString&lt;/strong&gt;, &lt;strong&gt;toLocaleString&lt;/strong&gt;, &lt;strong&gt;propertyIsEnumerable&lt;/strong&gt;, &lt;strong&gt;isPrototypeOf&lt;/strong&gt;, &lt;strong&gt;hasOwnProperty&lt;/strong&gt;, &lt;strong&gt;constructor&lt;/strong&gt;. Trong đó thuộc tính &lt;strong&gt;constructor&lt;/strong&gt; là thuộc tính trỏ ngược lại hàm &lt;strong&gt;Object()&lt;/strong&gt;, thử cái để thấy nè:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;constructor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ƒ Object() { [native code] }&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ƒ Object() { [native code] }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Giả sử vòng tròn đại diện cho hàm &lt;strong&gt;Object()&lt;/strong&gt; và hình vuông đại diện cho đối tượng &lt;strong&gt;Object.prototype&lt;/strong&gt;. Hình dưới đây minh họa mối quan hệ giữa hàm &lt;strong&gt;Object()&lt;/strong&gt; và đối tượng Object:
+&lt;img src=&quot;/assets/images/2016-09-29-javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class/1.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Ok, bây giờ chúng ta sẻ định nghĩa và sử dụng một cái giống như class trong các ngôn ngữ như Java, C#,…&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Animal class&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Animal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;age&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;age&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;//Implement method for animal class&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;Animal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my name is &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;Animal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getAge&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my age is &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// create a new instance of the Animal object.&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Animal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;TEXDY&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//my name is TEXDY&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getAge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;//my age is 3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Trong đoạn code trên ta đã dễ dàng định nghĩa và sử dụng cơ bản môt cái giống như class, đó là hàm Animal(name,age) chấp nhận hai đối số, thêm thuộc tính name và age cho đối tượng và đặt giá trị của thuộc tính name bằng đối số name, age bằng đối số age. Nhìn việc định nghĩa Animal đơn giản như thế, tuy nhiên phía sau nó Javascript thực hiện không hề đơn giản, Javascript tạo ra hàm Animal và thêm một đối tượng nặc danh nữa. Giống như đối tượng hàm Object ban đầu, hàm Animal có một thuộc tính có tên là prototype tham chiếu đến đối tượng nặc danh và đối tượng nặc danh có thuộc tính constructor trỏ về hàm Animal(). Ngoài ra, đối tượng Animal.prototype được liên kết với đối tượng Object.prototype thông qua [[Prototype]], được gọi là prototype linkage. Prototype linkage được ký hiệu bằng [[Prototype]], chúng được mô tả ở hình bên dưới:
+&lt;img src=&quot;/assets/images/2016-09-29-javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class/2.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Và khi thêm phương thức cho Animal chỉ đơn giản là thêm phương thức cho đối tượng nặc danh mà Animal.prototype tham chiếu đến:
+&lt;img src=&quot;/assets/images/2016-09-29-javascript-prototype-va-ke-thua-trong-javascript-thuankhong-es6-class/3.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;
+Khi tạo 1 instance của object Animal:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Animal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;TEXDY&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Khi thực thi dòng code trên thì Javascript tạo ra một Object mới tên là texDy, object này link đến Animal.prototype thông qua prototype linkage, việc link từ texDy đến Animal.prototype đến Object.prototype được gọi là prototype chain.&lt;/p&gt;
+
+&lt;p&gt;Khi một instance của một Object hay một Object nào đó gọi một phương thức, đầu tiên nó sẻ tìm xem nó hiện tại có giữ phương thức thức đó không, nếu không có thì sẻ duyệt từng prototype trong prototype chain từ dưới lên trên để tìm phương thức đó nếu có thì gọi. Lấy ví dụ như chương trình trên, đối tượng texDy vốn dĩ không chứa phương thức getName và getAge nên khi gọi hai phương thức đó texDy sẻ duyệt prototype chain để tìm và duyệt đến Animal.prototype thì gặp hai phương thức và gọi.&lt;/p&gt;
+
+&lt;p&gt;Nếu chúng ta gọi lệnh texDy.hasOwnProperty() thì nó sẻ tìm không có trong đối tượng texDy, Animal.prototype nên nó sẻ tìm lên đến Object.prototype, thấy phương thức đó và sẻ gọi Object.prototype,.hasOwnProperty().&lt;/p&gt;
+
+&lt;p&gt;Giả xử ta định nghĩa thêm một phương thức mới cho:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getFullInfo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;My name is&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot; ,i'm &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot; years old&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Thì khi gọi phương thức texDy.getFullInfo(); sẻ trả về ngay “My name isTEXDY ,i’m 3 years old”, đây là phương thức đã được định nghĩa ở Object texDy nên Javascript sẻ không phãi tìm trong prototype chain, đồng thời các instance khác của Animal sẻ không dùng được phương thức đó.&lt;/p&gt;
+
+&lt;p&gt;Cũng tương tự vậy, nếu chúng ta định nghĩa một phương thức getName mới cho texDy như sau:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;texDy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Toi la &quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Thì khi gọi texDy.getName() sẻ không còn in ra “my name is TEXDY” nữa mà sẻ in ra “Toi la TEXDY”, vì sao vậy, vì đơn giản là texDy đã có phương thức getName rồi, nó sẻ không phãi gọi lên prototype của cha nó nữa.&lt;/p&gt;
+
+&lt;p&gt;Ok, tới đây chắc clear rồi. Tóm lượt lại một lần nữa, Javascript sẻ kế thừa các phương thức, thuộc tính bằng cách tìm trong prototype chain đến các prototype của cha, ông, cố,…. của nó.&lt;/p&gt;</content><author><name>My Le Phuoc</name></author><category term="blog" /><category term="Javascript" /><category term="Prototype" /><summary type="html">Prototype là khái niệm rất rất quan trọng mà các Javascript Engineer phãi hiểu và tận dụng nó tốt. Đây là thành phần mà theo bản thân mình nghĩ gần như là cốt lõi của Javascript. Trong bài viết này chúng ta sẻ thảo luận và làm rõ những điểm cơ bản của thành phần này.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry><entry><title type="html">Node.JS – Single Thread Và Event Loop</title><link href="http://localhost:4000/nodejs-single-threaded-va-event-loop/" rel="alternate" type="text/html" title="Node.JS – Single Thread Và Event Loop" /><published>2016-09-24T22:48:00+07:00</published><updated>2016-09-24T22:48:00+07:00</updated><id>http://localhost:4000/nodejs-single-threaded-va-event-loop</id><content type="html" xml:base="http://localhost:4000/nodejs-single-threaded-va-event-loop/">&lt;p&gt;“Bạn biết gì về Node.js?Nói mình nghe về những thứ bạn biết về Node.js đi nào?” – Đó là câu hỏi phổ biến nhất trong các buổi phỏng vấn lập trình viên Node.js và quan trọng nhất đó cũng là câu hỏi mà các bạn thường phãi đặt ra đầu tiên cho chính mình khi bắt đầu làm việc với Node.js, thế phần đầu tiên mà mình nên biết đó là gì, theo mình đó là một trong những đặc điểm đặc trưng và kiến trúc cơ bản của nodejs – Single Threaded và Event Loop.&lt;/p&gt;
+
+&lt;p&gt;Lúc bắt đầu làm việc với Nodejs mình đã tự đặt ra câu hỏi với mình như này: “Nghe nói nodejs nó là Single Threaded thế Single Threaded thì làm sao mà handle được nhiều request cùng lúc được ta?”, ok bây giờ mình sẻ trình bày câu trả lời của mình(có thể sai có thể đúng, mong các bạn góp ý và phản biện bên dưới để giúp nhau hoàn thiện hơn :v)&lt;/p&gt;
+
+&lt;h4 id=&quot;mô-hình-xử-lý-web-truyền-thốngthread-base&quot;&gt;Mô hình xử lý web truyền thống(thread base):&lt;/h4&gt;
+
+&lt;p&gt;Như chúng ta đã biết thì các hệ thống server của các ngôn ngữ phổ biến như Java, C#,… thường sẻ xử lí các request dựa trên thread base như sau:
+&lt;img src=&quot;/assets/images/2016-09-24-nodejs-single-threaded-va-event-loop/1.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;
+Nhìn vào diagram trên bạn sẻ thấy rằng cứ mỗi request tới thì web server của chúng ta sẻ phãi khởi tạo 1 thread để handle request đó, các thread pool này sẻ được thực thi một cách song song và chúng sẻ bị block lại cho đến khi response về cho client.&lt;/p&gt;
+
+&lt;p&gt;Việc bạn thao tác các tác vụ blocking I/O như đọc database hay đọc file…. sẻ khiến thread bạn bị block lâu hơn, mà ví dụ như Java thì stack size dành cho 1 thread trên JVM mặc định là 1MB, như thế thì theo logic có thể để xử lí 1 request chúng ta sẻ tốn ít nhất 1MB và với n request đồng thời thì chúng ta sẻ phãi tốn ít nhất n(MB) đắt đỏ vcl đúng không nào, vì sự đắt đỏ đó nên số lượng thread pool thường được set cứng một số lượng cố định.&lt;/p&gt;
+
+&lt;p&gt;Tuy nhiên nếu là một hệ thống có lượng truy cập lớn thì chúng ta sẻ đối mặt ngay với vấn đề là nếu thread pool của chúng ta duy trì quá nhiều thread thì hệ thống của chúng ta sẻ rất khó kiểm soát đồng thời cost dành cho context switch(mình sẻ nói về vấn đề này sau nếu có cơ hội :v) tăng lên.&lt;/p&gt;
+
+&lt;p&gt;Nhưng nếu chúng ta duy trì quá ít thread trong thread pool thì lại làm tăng độ trể, khó đáp ứng cho người dùng. Hơn nữa việc xây dựng ứng dụng dựa trên thread lại đối mặt thêm một vấn đề đó là callstack, quá khó đúng không nào.
+Ngoài ra trong thực tế việc xử lí tác vụ multi threads cũng chẳng như lí thuyết chúng ta thường nghĩ đâu, liên tưởng như hình dưới đây :v
+&lt;img src=&quot;/assets/images/2016-09-24-nodejs-single-threaded-va-event-loop/2.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Node.js và event base sẻ phần nào giải quyết các vấn đề nói trên tuy nhiên sẻ có những điểm yếu khác sẻ lòi ra với Node.js mình sẻ nói sau.&lt;/p&gt;
+
+&lt;h3 id=&quot;nodejs-và-event-base&quot;&gt;Node.js và event base:&lt;/h3&gt;
+
+&lt;p&gt;Có thể chúng ta đã nghe nhiều về Node.js và có nhiều nhận định và câu hỏi trong đầu như sau: Nodejs là một Javascript runtime chạy trên máy chủ V8 của chrome, Nodejs sử dụng mô hình event-driven với cơ chế callback của Javascript và mô hình non blocking I/O giúp cho nó nhẹ và hiệu quả, nodejs không dựa trên mô hình đa threads mà là đơn thread với Event Loop.&lt;/p&gt;
+
+&lt;p&gt;OK, khi mình đọc ngang đó thì đéo hiểu gì hết ahihi. Mô hình event-driven trong Node.js nó như thế nào, Event Loop là gì, non blocking i/o nó ra sao, nghe nói nó single thread màsao nó xử lí được nhiểu request đồng thời…., đó là những điều mình thắc mắc khi mới tìm hiểu. Bây giờ chúng ta sẻ bàn vào kiến trúc của Nodejs để làm rõ điều đó.&lt;/p&gt;
+
+&lt;p&gt;Thực ra, Node.js vẫn duy trì một thread pool có số thread giới hạn để phục vụ các yêu cầu từ client.
+Để xử lí các request từ client, đầu tiên Nodejs sẻ tiếp nhận các request đó một cách tuần tự và đặt vào một cái queue chúng ta có thể gọi nó là event queue. Nodejs có một thành phần mà nó được coi là trái tim của Node đó là Event Loop, cũng như cái tên của nó, event loop sử dụng một vòng lặp vô hạn để tiếp nhận và xử lí các yêu cầu. Event loop kiểm tra trong event queue xem có request nào không, nếu không có thì cứ lặp mãi, nếu có thì sẻ có hai hướng sử lí sau:&lt;/p&gt;
+
+&lt;p&gt;– Nếu request không có yêu cầu gì đến blocking io thì xử lí mọi thứ từ yêu cầu sau đó event loop phản hồi lại cho client.&lt;/p&gt;
+
+&lt;p&gt;– Nếu request có một hoặc nhiều yêu cầu blocking i/o như đọc file/query database thì nó phãi kiễm tra xem trong Thread Pool có sẳn thread nào không, nếu có thread sẳn thì quăng request đó cho nó xử lí, xử lí xong thì quăng ngược lại cho event loop trả về cho client.
+Để dễ hiểu các bạn tham khảo diagram sau:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/2016-09-24-nodejs-single-threaded-va-event-loop/3.jpg&quot; alt=&quot;Markdowm Image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Đến đây có lẽ bạn đã hiểu kiến trúc Nodejs làm việc nhưng có thể bạn sẻ thắc mắc rằng thread pool của Nodejs nó giới hạn bao nhiêu threads, điều này phụ thuộc vào các thành phần blocking io mà Nodejs sẻ handle, ví dụ như handle file system, node sẻ dùng libuv để xử lí dụ đó và theo một số tài liệu thì số theads “mặc định” mà libuv giới hạn sẻ là 4. Có nghĩa là khi có 5 request yêu cầu làm việc với file system dồng thời thì request thứ 5 sẻ bị block cho đến khi 4 thread xử lí 4 request đầu tiên thực hiện xong.&lt;/p&gt;
+
+&lt;p&gt;Đến đây có thể là các bạn đã có thể hiểu một cách tương đối đầy đủ cách thức hoạt động của Node.js, cám ơn các bạn đọc bài viết, nếu có thắc mắc mong các bạn góp ý và phản biện bên dưới, cám ơn.&lt;/p&gt;</content><author><name>Le Phuoc My</name></author><category term="blog" /><category term="nodejs" /><category term="eventloop" /><category term="singlethreaded" /><summary type="html">“Bạn biết gì về Node.js?Nói mình nghe về những thứ bạn biết về Node.js đi nào?” – Đó là câu hỏi phổ biến nhất trong các buổi phỏng vấn lập trình viên Node.js và quan trọng nhất đó cũng là câu hỏi mà các bạn thường phãi đặt ra đầu tiên cho chính mình khi bắt đầu làm việc với Node.js, thế phần đầu tiên mà mình nên biết đó là gì, theo mình đó là một trong những đặc điểm đặc trưng và kiến trúc cơ bản của nodejs – Single Threaded và Event Loop.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/" /></entry></feed>
