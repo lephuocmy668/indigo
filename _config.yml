@@ -1,5 +1,5 @@
 # main text of home
-name: My Le Phuoc
+name: Le Phuoc My
 bio: Chicken Developer
 
 # twitter summary info
@@ -55,13 +55,13 @@ email: lephuocmy668@gmail.com
 
 authors:
     mylp:
-        name: My Le Phuoc
+        name: Le Phuoc My
         bio: Chicken Developer
         external-image: false
         picture: assets/images/profile.jpg
         twitter: johndoe
     mylp:
-        name: My Le Phuoc
+        name: Le Phuoc My
         bio: A Man who develops software with coffee
         external-image: false
         picture: assets/images/james.jpg
