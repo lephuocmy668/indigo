@@ -22,7 +22,7 @@ url: https://koppl.in/indigo
 permalink: /:title/
 
 sass:
-  add_charset: true
+    add_charset: true
 
 # To enable google analytics, supply your token below
 # analytics-google: 'UA-MYANALYTICS'
